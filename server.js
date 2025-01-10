@@ -1,4 +1,3 @@
-// server.js
 const app = require('./app');
 const http = require('http');
 const dotenv = require('dotenv');
@@ -14,5 +13,5 @@ const server = http.createServer(app);
 
 // Start the server
 server.listen(port, () => {
-  console.log(`Server is running on ${process.env.BACKEND_SERVER}`);
+  console.log(`Server is running on port ${port}`);
 });

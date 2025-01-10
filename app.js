@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,42 +5,35 @@ const authRoutes = require('./routes/authRoutes');
 const classRoutes = require('./routes/classRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const studentRoutes = require('./routes/studentRoutes');
-const authMiddleware = require('./middleware/authMiddleware');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-
 const app = express();
 
+// Define allowed origins
+const allowedOrigins = ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'];
+
+// CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'], // Add localhost for development
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
 
-// Middleware
-app.use(cors({
-  origin: 'https://edutrack-server.vercel.app/'
-}));
-
-// app.use(cors()); 
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+// Middleware to handle preflight requests
+app.options('*', cors(corsOptions));
 
-
-
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -50,18 +42,17 @@ mongoose
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-
-app.use('/api/auth', authRoutes); 
-app.use('/api/classes', classRoutes); 
-app.use('/api/teachers', teacherRoutes); 
-app.use('/api/students', studentRoutes); 
-
+// Route definitions
+app.use('/api/auth', authRoutes);
+app.use('/api/classes', classRoutes);
+app.use('/api/teachers', teacherRoutes);
+app.use('/api/students', studentRoutes);
 
 app.get('/', (req, res) => {
   res.send('EduTrack Backend is running!');
 });
 
-
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
