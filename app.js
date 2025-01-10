@@ -14,13 +14,32 @@ dotenv.config();
 
 const app = express();
 
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'], // Add localhost for development
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+};
+
 // Middleware
 app.use(cors({
   origin: 'https://edutrack-server.vercel.app/'
 }));
 
 // app.use(cors()); 
-app.use(express.json()); 
+app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 
 
 mongoose
