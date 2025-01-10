@@ -15,7 +15,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); 
+app.use(cors({
+  origin: 'https://edutrack-server.vercel.app/'
+}));
+
+// app.use(cors()); 
 app.use(express.json()); 
 
 
