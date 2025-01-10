@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 
 // Define allowed origins
-const allowedOrigins = ['http://localhost:5173', 'https://edutrack-crm.vercel.app/'];
+const allowedOrigins = ['http://localhost:5173', 'https://edutrack-crm.vercel.app'];
 
 // CORS configuration
 const corsOptions = {
@@ -23,7 +23,8 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'], // Add necessary headers
   credentials: true,
 };
 
@@ -41,6 +42,9 @@ mongoose
   })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
+
+// Middleware to parse JSON
+app.use(express.json());
 
 // Route definitions
 app.use('/api/auth', authRoutes);
