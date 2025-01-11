@@ -27,6 +27,12 @@ app.use('/api/classes', require('./routes/classRoutes'));
 app.use('/api/teachers', require('./routes/teacherRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
 
+
+console.log('Environment check on startup:');
+console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
+console.log('PORT exists:', !!process.env.PORT);
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
