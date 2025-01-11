@@ -12,6 +12,6 @@ const port = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 // Start the server
-server.listen(port, () => {
+server.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
 });
